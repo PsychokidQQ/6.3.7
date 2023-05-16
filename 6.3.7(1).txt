@@ -1,0 +1,71 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+
+class IPAddress {
+public:
+    IPAddress(const std::string& address) : address_(address) {}
+
+    // Copy constructor
+    IPAddress(const IPAddress& other) : address_(other.address_) {}
+
+    virtual void print() {
+        std::cout << address_;
+    }
+
+protected:
+    std::string address_;
+};
+
+class IPAddressChecked : public IPAddress {
+public:
+    IPAddressChecked(const std::string& address) : IPAddress(address), is_correct_(checkAddress(address)) {}
+
+    // Copy constructor
+    IPAddressChecked(const IPAddressChecked& other) : IPAddress(other), is_correct_(other.is_correct_) {}
+
+    void print() override {
+        IPAddress::print();
+        std::cout << " - " << (is_correct_ ? "Correct" : "Not Correct") << std::endl;
+    }
+
+private:
+    bool checkAddress(const std::string& address) {
+        std::istringstream iss(address);
+        int a, b, c, d;
+        char dot1, dot2, dot3;
+        if (iss >> a >> dot1 >> b >> dot2 >> c >> dot3 >> d && dot1 == '.' && dot2 == '.' && dot3 == '.' && a >= 0 && a <= 255 && b >= 0 && b <= 255 && c >= 0 && c <= 255 && d >= 0 && d <= 255) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    bool is_correct_;
+};
+
+int main() {
+    std::string address1, address2, address3;
+    std::cout << "Enter an IP address: ";
+    std::cin >> address1;
+    std::cout << "Enter another IP address: ";
+    std::cin >> address2;
+    std::cout << "Enter a third IP address: ";
+    std::cin >> address3;
+
+    IPAddress ip1(address1);
+    IPAddressChecked ip2(address2);
+    IPAddressChecked ip3(address3);
+
+    std::cout << "IP address 1: ";
+    ip1.print();
+    std::cout << std::endl;
+
+    std::cout << "IP address 2: ";
+    ip2.print();
+
+    std::cout << "IP address 3: ";
+    ip3.print();
+
+    return 0;
+}
